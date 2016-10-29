@@ -89,10 +89,11 @@ void executer(int option, char *cachette, char *sujet)
   {
     if(initialiserFichier(option, &c, &s, cachette, sujet) == 0)
     {
-        executerOption(c,s,option);
+      executerOption(c,s,option);
     }else{
       fprintf(stderr, "Probleme de fichier : %s\n", strerror(errno));
     }
+    fermer(c,s);
   }
   else{
     fprintf(stderr, "Commande inconnue\n");
@@ -116,7 +117,7 @@ int initialiserFichier(int option, int *cachette, int *sujet, char *nomC, char *
     *cachette = open(nomC, O_RDONLY);
     *sujet = open(nomS, O_TRUNC|O_CREAT|O_WRONLY, 0664);
   }
-  if(*cachette == 0 | *sujet == 0)
+  if(*cachette< 0 | *sujet<0)
   {
     res = 1;
   }
