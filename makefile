@@ -9,4 +9,8 @@ $(FICHIER).o: $(FICHIER).c
 clean:
 	rm *.o $(FICHIER)
 debug: $(FICHIER).c
-	gcc -g $(FICHIER).c -o Debug 
+	gcc -g $(FICHIER).c -o Debug
+install:
+	sudo cp hide /bin
+uninstall:
+	sudo rm /bin/hide
