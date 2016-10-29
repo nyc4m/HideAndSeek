@@ -87,24 +87,38 @@ void executer(int option, char *cachette, char *sujet)
   int s = 0;
   if(option == 1 || option == 2)
   {
-      if(option == 1)
-      {
-        if((c = open(cachette, O_WRONLY)) != 0 && (s = open(sujet, O_RDONLY)) != 0)
-        {
-          cacher(c, s);
-        }else{
-          fprintf(stderr, "Probleme de fichier : %s\n", strerror(errno));
-        }
-      }else{
-        if((c = open(cachette, O_RDONLY)) != 0 && (s = open(sujet, O_TRUNC | O_CREAT | O_WRONLY, 0664)))
-        {
-          montrer(c, s);
-        }else{
-          fprintf(stderr, "Probleme de fichier : %s\n", strerror(errno));
-        }
-      }
-      fermer(c,s);
-  }else{
+    if(initialiserFichier(option, &c, &s, cachette, sujet) == 0)
+    {
+        executerOption(c,s,option);
+    }else{
+      fprintf(stderr, "Probleme de fichier : %s\n", strerror(errno));
+    }
+  }
+  else{
     fprintf(stderr, "Commande inconnue\n");
   }
+}
+
+void executerOption(int cachette, int sujet, int option)
+{
+  void (*operation[2])(int, int)={cacher, montrer};
+  operation[option-1](cachette, sujet);
+}
+
+int initialiserFichier(int option, int *cachette, int *sujet, char *nomC, char *nomS)
+{
+  int res = 0;
+  if(option == 1)
+  {
+    *cachette = open(nomC, O_WRONLY);
+    *sujet = open(nomS, O_RDONLY);
+  }else{
+    *cachette = open(nomC, O_RDONLY);
+    *sujet = open(nomS, O_TRUNC|O_CREAT|O_WRONLY, 0664);
+  }
+  if(*cachette == 0 | *sujet == 0)
+  {
+    res = 1;
+  }
+  return res;
 }
