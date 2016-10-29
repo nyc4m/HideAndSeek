@@ -7,7 +7,7 @@ int main(int argc, char **argv)
   {
     executer(lireParam(argv[1]), argv[2], argv[3]);
   }else{
-    fprintf(stderr, "Pas assez d'arguments\n");
+    fprintf(stderr, "[ERREUR] Pas assez d'arguments\n");
     exec = 1;
   }
   return exec;
@@ -90,13 +90,14 @@ void executer(int option, char *cachette, char *sujet)
     if(initialiserFichier(option, &c, &s, cachette, sujet) == 0)
     {
       executerOption(c,s,option);
+      printf("Commande executee correctement !\n");
     }else{
-      fprintf(stderr, "Probleme de fichier : %s\n", strerror(errno));
+      fprintf(stderr, "[ERREUR] Probleme de fichier : %s\n", strerror(errno));
     }
     fermer(c,s);
   }
   else{
-    fprintf(stderr, "Commande inconnue\n");
+    fprintf(stderr, "[ERREUR] Commande inconnue\n");
   }
 }
 
