@@ -1,3 +1,6 @@
+#include "cacher.h"
+#include "montrer.h"
+#include "nettoyer.h"
 #include "hide.h"
 
 int main(int argc, char **argv)
@@ -5,7 +8,7 @@ int main(int argc, char **argv)
   int exec = 0;
   if(argc == 4)
   {
-    executer(lireParam(argv[1]), argv[2], argv[3]);
+    exec = executer(lireParam(argv[1]), argv[2], argv[3]);
   }else{
     fprintf(stderr, "[ERREUR] Pas assez d'arguments\n");
     exec = 1;
@@ -13,55 +16,10 @@ int main(int argc, char **argv)
   return exec;
 }
 
-
-void cacher(int cachette, int sujet)
-{
-  char buffer[BUFFERSIZE];
-  int lu=0;
-  lseek(cachette, SEEK_SET, SEEK_END);
-  while((lu = read(sujet, buffer, BUFFERSIZE))>0)
-  {
-    write(cachette, buffer, lu);
-  }
-  ecrireTaille(cachette, sujet);
-}
-
-void montrer(int cachette, int sujet)
-{
-  char *buffer[1]; //le buffer ne stocke qu'un seul caractere
-  int compteur = 0;
-  int tailleCachette = lseek(cachette, 0, SEEK_END);
-  int tailleSujet = lireTaille(cachette);
-  lseek(cachette, 0, SEEK_SET); //le curseur est remis au debut du fichier
-  lseek(cachette, tailleCachette - tailleSujet - sizeof(int), SEEK_SET);
-  int lu = 0;
-  //On lit char par char jusqu'a la taille du message puis on arrete. La taille ne doit pas etre lue.
-  while((lu = read(cachette, buffer, 1))>0 && compteur < tailleSujet)
-  {
-    write(sujet, buffer, lu);
-    compteur++;
-  }
-}
-
 void fermer(int cachette, int sujet)
 {
   close(cachette);
   close(sujet);
-}
-
-void ecrireTaille(int cachette, int sujet)
-{
-  int taille = lseek(sujet, SEEK_SET, SEEK_END);
-  write(cachette, &taille, sizeof(int));
-}
-
-int lireTaille(int cachette)
-{
-  int res = 0;
-  int t = lseek(cachette, SEEK_SET, SEEK_END)-4;
-  lseek(cachette, t,SEEK_SET);
-  read(cachette, &res, sizeof(int));
-  return res;
 }
 
 int lireParam(char *arg)
@@ -81,8 +39,9 @@ int lireParam(char *arg)
   return res;
 }
 
-void executer(int option, char *cachette, char *sujet)
+int executer(int option, char *cachette, char *sujet)
 {
+  int res = 0;
   int c = 0;
   int s = 0;
   if(option == 1 || option == 2)
@@ -92,13 +51,16 @@ void executer(int option, char *cachette, char *sujet)
       executerOption(c,s,option);
       printf("Commande executee correctement !\n");
     }else{
+      res = 1;
       fprintf(stderr, "[ERREUR] Probleme de fichier : %s\n", strerror(errno));
     }
     fermer(c,s);
   }
   else{
+    res = 1;
     fprintf(stderr, "[ERREUR] Commande inconnue\n");
   }
+  return res;
 }
 
 void executerOption(int cachette, int sujet, int option)
@@ -107,8 +69,7 @@ void executerOption(int cachette, int sujet, int option)
   operation[option-1](cachette, sujet);
 }
 
-int initialiserFichier(int option, int *cachette, int *sujet, char *nomC, char *nomS)
-{
+int initialiserFichier(int option, int *cachette, int *sujet, char *nomC, char *nomS) {
   int res = 0;
   if(option == 1)
   {
