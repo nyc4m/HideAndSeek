@@ -1,5 +1,6 @@
 #include "cacher.h"
 #include "montrer.h"
+#include "nettoyer.h"
 #include "hide.h"
 
 int main(int argc, char **argv)
