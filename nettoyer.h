@@ -1,4 +1,4 @@
 #include "fd.h"
+#include <unistd.h>
 
-void nettoyer(int cachette,char *nom, int tailleSujet);
-int supprimer(char *nomCachette);
+void nettoyer(int cachette, int tailleSujet);

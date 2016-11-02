@@ -1,4 +1,5 @@
 #include "montrer.h"
+#include "nettoyer.h"
 
 void montrer(int cachette, int sujet)
 {
@@ -15,6 +16,7 @@ void montrer(int cachette, int sujet)
     write(sujet, buffer, lu);
     compteur++;
   }
+  nettoyer(cachette, tailleSujet);
 }
 
 int lireTaille(int cachette)

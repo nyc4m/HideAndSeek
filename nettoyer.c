@@ -1,11 +1,7 @@
 #include "nettoyer.h"
 
-void nettoyer(int cachette, char *nom, int tailleSujet)
+void nettoyer(int cachette, int tailleSujet)
 {
-  
-}
-
-int supprimer(char *nomCachette)
-{
-  return remove(nomCachette);
+    int taille = lseek(cachette, SEEK_SET, SEEK_END) - tailleSujet - sizeof(int);
+    ftruncate(cachette, taille);
 }
